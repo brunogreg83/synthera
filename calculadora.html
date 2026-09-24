@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#061523">
+<meta name="apple-mobile-web-app-title" content="Synthera">
+<title>Calculadora de Diluição | Synthera</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#14d9ec;--blue-light:#72eff7;--blue-dark:#061523;--blue-pale:#0d2b3d;--white:#f5f8fa;--off-white:#091d2d;--gray:rgba(255,255,255,.14);--text:#f5f8fa;--text-muted:#a7b6c2;--bg:#061523;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;padding:0;}
+  body{background:radial-gradient(circle at 85% 8%,rgba(20,217,236,.12),transparent 32%),linear-gradient(180deg,#061523 0%,#091d2d 100%);color:var(--text);font-family:'Nunito',sans-serif;display:flex;justify-content:center;min-height:100vh;}
+  .app{width:100%;max-width:460px;height:100vh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);}
+  .card{background:rgba(9,29,45,.96);border:1px solid rgba(20,217,236,.13);border-radius:0;box-shadow:0 20px 60px rgba(0,0,0,.32);overflow:hidden;display:flex;flex-direction:column;flex:1;position:relative;}
+  .card:before{content:"";position:absolute;width:360px;height:360px;border:1px solid rgba(20,217,236,.08);border-radius:50%;right:-260px;top:130px;pointer-events:none;}
+  .card-header{background:linear-gradient(135deg,#071a2a,#0b3042);padding:12px 16px;color:#fff;display:flex;align-items:center;gap:14px;flex-shrink:0;border-bottom:1px solid rgba(20,217,236,.16);min-height:80px;justify-content:flex-start;}
+  .card-header .brand{width:125px;flex-shrink:0;padding-right:0;margin-right:0;font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:800;letter-spacing:.08em;white-space:nowrap;color:#fff;}
+  .brand-phone{display:flex;align-items:center;justify-content:center;gap:4px;color:var(--blue-light);text-decoration:none;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:600;opacity:.95;}
+  .whatsapp-icon{width:.72rem;height:.72rem;flex:0 0 .72rem;}
+  .header-title{display:flex;flex-direction:column;justify-content:center;align-items:center;flex:1;min-width:0;text-align:center;border-left:1px solid rgba(20,217,236,.35);padding-left:18px;margin-left:4px;height:52px;}
+  .card-header .title{font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;line-height:1.15;margin:0;text-align:center;color:#fff;}
+  .card-header .subtitle{font-size:.7rem;color:rgba(245,248,250,.72);margin-top:1px;margin-bottom:0;text-align:center;}
+  .card-body{padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1;}
+  .field-label{display:flex;align-items:center;gap:6px;font-weight:700;color:var(--text);margin-bottom:6px;font-size:1rem;}
+  .field-label svg,.result-box svg,.concentration-box svg{stroke:var(--blue)!important;}
+  .presets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px;}
+  .presets button{padding:10px 0;border-radius:8px;font-size:.85rem;font-weight:700;border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:background .15s,color .15s;background:rgba(255,255,255,.045);color:var(--text-muted);font-family:'Nunito',sans-serif;}
+  .presets button.active{background:var(--blue);color:#03121d;border-color:var(--blue);}
+  .card-body::-webkit-scrollbar{width:4px}.card-body::-webkit-scrollbar-track{background:transparent}.card-body::-webkit-scrollbar-thumb{background:rgba(20,217,236,.22);border-radius:4px}
+  .input-row{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.025);border-radius:10px;padding:10px 12px;}
+  .input-row:focus-within{border-color:rgba(20,217,236,.6);box-shadow:0 0 0 3px rgba(20,217,236,.07);}
+  .input-row span.prefix{font-weight:700;color:var(--text);font-size:1rem;line-height:1}.input-row span.suffix{color:var(--text-muted);font-size:.85rem;line-height:1}
+  .input-row input{flex:1;border:none;outline:none;font-size:1.05rem;color:var(--text);background:transparent;min-width:0;font-family:'Nunito',sans-serif;font-weight:600;text-align:center;line-height:1;}
+  .input-row input::placeholder{color:#647987;}
+  .divider{height:1px;background:rgba(255,255,255,.10);margin:2px 0;}
+  .result-title{font-size:.7rem;font-weight:800;letter-spacing:1.2px;color:var(--blue);margin-bottom:6px;text-align:center;}
+  .result-grid{display:flex;flex-direction:column;gap:10px;}
+  .result-box{background:linear-gradient(145deg,rgba(20,217,236,.10),rgba(255,255,255,.025));border:1px solid rgba(20,217,236,.12);border-radius:12px;padding:16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .result-box .label{display:flex;align-items:center;justify-content:center;gap:4px;color:var(--blue);font-weight:700;font-size:.75rem;margin-bottom:4px;line-height:1;}
+  .result-box .value{font-family:'Montserrat',sans-serif;font-size:1.6rem;font-weight:800;color:var(--text);line-height:1}.result-box .unit{color:var(--text-muted);font-size:.75rem;line-height:1;}
+  .concentration-box{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;justify-content:center;}
+  .concentration-box .circle{flex-shrink:0;width:40px;height:40px;border-radius:50%;background:rgba(20,217,236,.08);display:flex;align-items:center;justify-content:center;}
+  .concentration-box > div{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .concentration-box .label{font-size:.7rem;font-weight:800;letter-spacing:1px;color:var(--text-muted);line-height:1}.concentration-box .value{font-family:'Montserrat',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);line-height:1;}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+<div class="card-header">
+<div class="brand"><div>SYNTHERA</div><a class="brand-phone" href="https://wa.me/5543988712001" target="_blank" rel="noopener noreferrer" aria-label="Conversar pelo WhatsApp"><svg class="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.54 0 .22 5.32.22 11.86c0 2.09.55 4.13 1.59 5.93L.12 24l6.35-1.67a11.84 11.84 0 0 0 5.61 1.42h.01c6.54 0 11.86-5.32 11.86-11.86 0-3.17-1.23-6.15-3.43-8.41ZM12.09 21.7h-.01a9.85 9.85 0 0 1-5.02-1.37l-.36-.21-3.77.99 1.01-3.67-.23-.38a9.84 9.84 0 0 1-1.51-5.2c0-5.42 4.42-9.83 9.85-9.83 2.63 0 5.1 1.02 6.96 2.89a9.8 9.8 0 0 1 2.88 6.96c0 5.42-4.42 9.83-9.8 9.83Zm5.4-7.37c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z"/></svg>(43) 98871-2001</a></div><div class="header-title"><div class="title">Calculadora de Diluição</div><div class="subtitle">Precisão para seus processos</div></div>
+</div>
+<div class="card-body">
+<div><div class="field-label"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.5L4.5 18a2 2 0 001.7 3h11.6a2 2 0 001.7-3L14 8.5V3"/></svg>Proporção (1:X)</div><div id="dc-ratio-presets" class="presets"></div><div class="input-row"><span class="prefix">1 :</span><input id="dc-ratio-input" type="text" inputmode="decimal" placeholder="Ex: 100"></div></div>
+<div><div class="field-label"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16V8z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg>Volume Final Desejado (Litros)</div><div id="dc-volume-presets" class="presets"></div><div class="input-row"><input id="dc-volume-input" type="text" inputmode="decimal" placeholder="Ex: 1"><span class="suffix">litros</span></div></div>
+<div class="divider"></div>
+<div><div class="result-title">RESULTADO</div><div class="result-grid">
+<div class="result-box"><div class="label"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.5L4.5 18a2 2 0 001.7 3h11.6a2 2 0 001.7-3L14 8.5V3"/></svg>PRODUTO</div><div id="dc-result-product" class="value">0</div><div class="unit">mL</div></div>
+<div class="result-box"><div class="label"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>ÁGUA</div><div id="dc-result-water" class="value">0</div><div class="unit">mL</div></div>
+<div class="concentration-box"><div class="circle"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div><div><div class="label">CONCENTRAÇÃO FINAL</div><div id="dc-result-concentration" class="value">0%</div></div></div>
+<div class="concentration-box"><div class="circle"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1a4fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg></div><div><div class="label">PPM</div><div id="dc-result-ppm" class="value">0</div></div></div>
+</div></div>
+</div>
+</div>
+</div>
+<script>
+(function(){
+var RATIO_PRESETS=[50,100,200,500],VOLUME_PRESETS=[1,2,5,10];
+var ratioInput=document.getElementById('dc-ratio-input'),volumeInput=document.getElementById('dc-volume-input'),ratioPresetsEl=document.getElementById('dc-ratio-presets'),volumePresetsEl=document.getElementById('dc-volume-presets'),resultProduct=document.getElementById('dc-result-product'),resultWater=document.getElementById('dc-result-water'),resultConcentration=document.getElementById('dc-result-concentration'),resultPpm=document.getElementById('dc-result-ppm');
+function buildPresets(container,values,suffix,getCurrent,onSelect){container.innerHTML='';values.forEach(function(v){var btn=document.createElement('button');btn.type='button';btn.textContent=(suffix===':'?'1:'+v:v+suffix);btn.className=(getCurrent()===v?'active':'');btn.addEventListener('click',function(){onSelect(v)});container.appendChild(btn);});}
+function fmt(n){return n.toLocaleString('pt-BR',{maximumFractionDigits:1});}
+function parseNum(val){return parseFloat(String(val).replace(',','.'));}
+function render(){
+var ratioNum=parseNum(ratioInput.value),volumeNum=parseNum(volumeInput.value),valid=ratioNum>0&&volumeNum>0;
+buildPresets(ratioPresetsEl,RATIO_PRESETS,':',function(){return ratioNum},function(v){ratioInput.value=String(v);render()});
+buildPresets(volumePresetsEl,VOLUME_PRESETS,'L',function(){return volumeNum},function(v){volumeInput.value=String(v);render()});
+if(valid){var totalML=volumeNum*1000,productML=totalML/ratioNum,waterML=totalML-productML,concentration=100/ratioNum,ppm=1000000/ratioNum;resultProduct.textContent=fmt(productML);resultWater.textContent=fmt(waterML);resultConcentration.textContent=fmt(concentration)+'%';resultPpm.textContent=fmt(ppm);}
+else{resultProduct.textContent='0';resultWater.textContent='0';resultConcentration.textContent='0%';resultPpm.textContent='0';}
+}
+ratioInput.addEventListener('input',render);volumeInput.addEventListener('input',render);render();
+})();
+if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+</script>
+</body>
+</html>
